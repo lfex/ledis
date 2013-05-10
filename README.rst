@@ -43,7 +43,7 @@ and use the library
 
 .. code:: cl
 
-Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] [async-threads:0] [hipe] [kernel-poll:false]
+    Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] [async-threads:0] [hipe] [kernel-poll:false]
 
     LFE Shell V5.9.3 (abort with ^G)
     > (set (tuple 'ok client) (: eredis start_link))
