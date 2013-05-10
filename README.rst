@@ -19,8 +19,8 @@ You will need the following installed on your system:
 * `rebar`_
 
 
-Additionally, the ledis Makefile sets up the following dependencies for you
-automatically when you run the `compile` target:
+Additionally, the ledis ``Makefile`` sets up the following dependencies for you
+automatically when you run the ``compile`` target:
 
 * `LFE`_
 
