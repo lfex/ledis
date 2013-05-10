@@ -37,7 +37,9 @@ Here's what you need to do:
   $ cd ledis
   $ make compile
 
-At this point, you will be able to run an LFE REPL (shell)::
+At this point, you will be able to run an LFE REPL (shell):
+
+.. code:: bash
 
   $ make shell
 
@@ -63,6 +65,9 @@ and use the library:
     > (: erlang binary_to_list result)
     "barz42"
     >
+
+That's just an example on how to use `eredis`_ from `LFE`_. In the next section,
+we'll give some examples of using ledis directly.
 
 Usage
 -----
