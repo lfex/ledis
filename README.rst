@@ -29,7 +29,9 @@ automatically when you run the ``compile`` target:
 Installtion and Setup
 ---------------------
 
-Here's what you need to do::
+Here's what you need to do:
+
+.. code:: bash
 
   $ git clone https://github.com/oubiwann/ledis.git
   $ cd ledis
@@ -39,7 +41,7 @@ At this point, you will be able to run an LFE REPL (shell)::
 
   $ make shell
 
-and use the library
+and use the library:
 
 .. code:: cl
 
