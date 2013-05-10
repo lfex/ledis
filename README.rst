@@ -4,7 +4,7 @@ ledis
 .. image:: resources/logos/ButterCrunchLettuce-2-small.png
    :target: resources/logos/ButterCrunchLettuce-2-medium.png
 
-An LFE wrapper for the eredis library.
+An `LFE`_ wrapper for the eredis library.
 
 
 Dependences
@@ -18,6 +18,13 @@ You will need the following installed on your system:
 
 * `rebar`_
 
+
+Additionally, the ledis Makefile sets up the following dependencies for you
+automatically when you run the `compile` target:
+
+* `LFE`_
+
+* `eredis`_
 
 Installtion and Setup
 ---------------------
@@ -37,8 +44,14 @@ Usage
 
 TBD
 
+.. code:: cl
+
+  (this is a (test))
+
 .. Links
 .. -----
+.. _LFE: http://lfe.github.io/
 .. _Erlang: http://www.erlang.org/
 .. _Redis: http://redis.io/
 .. _rebar: https://github.com/rebar/rebar
+.. _eredis: https://github.com/wooga/eredis
