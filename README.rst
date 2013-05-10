@@ -1,7 +1,8 @@
 ledis
 =====
 
-.. image: resources/logos/ButterCrunchLettuce-2-small.png
+.. image:: resources/logos/ButterCrunchLettuce-2-small.png
+   :target: resources/logos/ButterCrunchLettuce-2-medium.png
 
 An LFE wrapper for the eredis library.
 
@@ -40,4 +41,4 @@ TBD
 .. -----
 .. _Erlang: http://www.erlang.org/
 .. _Redis: http://redis.io/
-.. _rebard: https://github.com/rebar/rebar
+.. _rebar: https://github.com/rebar/rebar
