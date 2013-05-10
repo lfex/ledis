@@ -35,9 +35,32 @@ Here's what you need to do::
   $ cd ledis
   $ make compile
 
-At this point, you will be able to run an LFE REPL (shell) and use the library::
+At this point, you will be able to run an LFE REPL (shell)::
 
   $ make shell
+
+and use the library
+
+.. code:: cl
+
+Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] [async-threads:0] [hipe] [kernel-poll:false]
+
+    LFE Shell V5.9.3 (abort with ^G)
+    > (set (tuple 'ok client) (: eredis start_link))
+    #(ok <0.31.0>)
+    > (: eredis q client '("SET" "fooz42" "barz42"))
+    #(ok #B(79 75))
+    > (: eredis q client '("GET" "fooz42"))
+    #(ok #B(98 97 114 122 52 50))
+    > (: eredis q client '("GET" "fooz43"))
+    #(ok undefined)
+    > (set (tuple 'ok result) (: eredis q client '("GET" "fooz42")))
+    #(ok #B(98 97 114 122 52 50))
+    > result
+    #B(98 97 114 122 52 50)
+    > (: erlang binary_to_list result)
+    "barz42"
+    >
 
 Usage
 -----
