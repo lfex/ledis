@@ -3,7 +3,7 @@
   (import (from eredis (start_link 0) (q 2) (qp 2))))
 
 
-; this is the standard way of doing this, using the third party library
+; this is a simple wrapper for making a query
 (defun do-query (client command arg)
   (let (((tuple 'ok response) (q client (list command arg))))
     (: erlang binary_to_list response)))
