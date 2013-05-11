@@ -10,8 +10,8 @@
 
 
 ; this function is used in the following manner:
-;   > (set client (: wrapper1 client-factory))
-;   #Fun<wrapper1.0.66730582>
+;   > (set client (: wrapper2 client-factory))
+;   #Fun<wrapper2.0.66730582>
 ;   > (funcall (funcall client 'get) '"fooz-1")
 ;   "barz-1"
 (defun client-factory ()
@@ -22,10 +22,10 @@
 
 
 ; this function is used in the following manner:
-;   > (set client (: wrapper1 client-factory))
-;   #Fun<wrapper1.0.66730582>
-;   > (set function (: wrapper1 get-method client 'get))
-;   #Fun<wrapper1.1.66730582>
+;   > (set client (: wrapper2 client-factory))
+;   #Fun<wrapper2.0.66730582>
+;   > (set function (: wrapper2 get-method client 'get))
+;   #Fun<wrapper2.1.66730582>
 ;   > (funcall function '"fooz-1")
 ;   "barz-1"
 (defun get-method (object command)
@@ -33,9 +33,9 @@
 
 
 ; this function is used in the following manner:
-;   > (set client (: wrapper1 client-factory))
-;   #Fun<wrapper1.0.131664084>
-;   > (: wrapper1 send client 'get '"fooz-2")
+;   > (set client (: wrapper2 client-factory))
+;   #Fun<wrapper2.0.131664084>
+;   > (: wrapper2 send client 'get '"fooz-2")
 ;   "barz-2"
 (defun send (object command arg)
   (funcall (get-method object command) arg))
