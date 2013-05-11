@@ -2,6 +2,7 @@
   (export all)
   (import (from eredis (start_link 0) (q 2) (qp 2))))
 
+
 ; this is the standard way of doing this, using the third party library
 (defun do-query ()
   (let (((tuple 'ok client) (start_link)))
@@ -35,6 +36,7 @@
 ;   "barz-1"
 (defun get-method (object message)
   (funcall object message))
+
 
 ; this function is used in the following manner:
 ;   > (set client (: wrapper1 client-factory))
