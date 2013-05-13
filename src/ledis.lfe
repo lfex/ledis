@@ -1,7 +1,7 @@
 (defmodule ledis
   (export all)
   (import
-    (rename eredis ((start_link 0) eredis-start)
+    (rename eredis ((start_link 4) eredis-start)
                    ((q 2) eredis-query)
                    ((qp 2) eredis-pipeline))))
 
@@ -9,6 +9,7 @@
 (defun format-response (response)
   (cond ((: erlang is_binary response) (: erlang binary_to_list response))
         ('true response)))
+
 
 ; this is a simple wrapper for making a query
 (defun do-query (client command arg)
@@ -26,12 +27,27 @@
 ;   #Fun<ledis.0.66730582>
 ;   > (funcall (funcall client 'get) '"fooz-1")
 ;   "barz-1"
-;
+(defun make-client ()
+  (make-client '"127.0.0.1" 6379 0 '""))
+
+
+(defun make-client (host)
+  (make-client host 6379 0 '""))
+
+
+(defun make-client (host port)
+  (make-client host port 0 '""))
+
+
+(defun make-client (host port database)
+  (make-client host port database '""))
+
+
 ; XXX in this function, we should be able to match lambda for 1, 2, 3, 4, etc.,
 ; args; it's broken right now, pending resolution to this issue:
 ;   https://github.com/oubiwann/ledis/issues/2
-(defun make-client ()
-  (let (((tuple 'ok client) (eredis-start)))
+(defun make-client (host port database password)
+  (let (((tuple 'ok client) (eredis-start host port database password)))
     (lambda (command)
       (match-lambda
         ((arg)
