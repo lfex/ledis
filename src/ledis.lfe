@@ -83,9 +83,9 @@
   (send client '"SET" key value))
 
 
-; if that last one was to be defined in a ledis module and then imported into
-; another project, one would call it in the following manner, assuming you had
-; already defined the client:
+; if the get function above was to be defined in a ledis module and then
+; imported into another project, one would call it in the following manner,
+; assuming you had already defined the client:
 ;   (get client '"fooz-4')
 
 
