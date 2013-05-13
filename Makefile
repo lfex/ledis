@@ -10,9 +10,15 @@ OUT_DIR = ./ebin
 get-deps:
 	rebar get-deps
 
-compile: get-deps
+clean-ebin:
+	-rm $(OUT_DIR)/*.beam
+
+compile: get-deps clean-ebin
 	rebar compile
 	ERL_LIBS=$(ERL_LIBS) $(LFEC) -o $(OUT_DIR) src/*.lfe
 
 shell:
 	ERL_LIBS=$(ERL_LIBS) $(LFE)
+
+clean: clean-ebin
+	rebar clean
