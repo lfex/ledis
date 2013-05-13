@@ -54,27 +54,27 @@
 ;   #Fun<ledis.1.66730582>
 ;   > (funcall function '"fooz-1")
 ;   "barz-1"
-(defun get-method (object command)
-  (funcall object command))
+(defun get-method (client-maker command)
+  (funcall client-maker command))
 
 ; this function is used in the following manner:
 ;   > (set client (: ledis make-client))
 ;   #Fun<ledis.0.131664084>
 ;   > (: ledis send client 'get '"fooz-2")
 ;   "barz-2"
-(defun send (object command arg)
-  (funcall (get-method object command) arg))
+(defun send (client-maker command arg)
+  (funcall (get-method client-maker command) arg))
 
-(defun send (object command arg1 arg2)
-  (funcall (get-method object command) arg1 arg2))
+(defun send (client-maker command arg1 arg2)
+  (funcall (get-method client-maker command) arg1 arg2))
 
 ; this function is used in the following manner:
 ;   > (set client (: ledis make-client))
 ;   #Fun<ledis.0.87519432>
 ;   > (: ledis get client '"fooz-4")
 ;   "barz-4"
-(defun get (client key)
-  (send client '"GET" key))
+(defun get (client-maker key)
+  (send client-maker '"GET" key))
 
-(defun set (client key value)
-  (send client '"SET" key value))
+(defun set (client-maker key value)
+  (send client-maker '"SET" key value))
