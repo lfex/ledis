@@ -1,31 +1,24 @@
 (defmodule ledis
   (export all)
-  (import (from eredis (start_link 0) (q 2) (qp 2))))
+  (import
+    (rename eredis ((start_link 0) eredis-start)
+                   ((q 2) eredis-query)
+                   ((qp 2) eredis-pipeline))))
 
 
-; the code below should be compared to the eredis way of doing things, to assess
-; its usability and any gains over eredis in usability. here's eredis:
-;   > (set (tuple 'ok client) (: eredis start_link))
-;   #(ok <0.31.0>)
-;   > (: eredis q client '("GET" "foo2"))
-;   #(ok #B(98 97 114 50))
-;
-; if one imported start_link, q, etc., from eredis in a module, then it would be
-; this instead:
-;   > (set (tuple 'ok client) (start_link))
-;   #(ok <0.31.0>)
-;   > (q client '("GET" "foo2"))
-
+(defun format-response (response)
+  (cond ((: erlang is_binary response) (: erlang binary_to_list response))
+        ('true response)))
 
 ; this is a simple wrapper for making a query
 (defun do-query (client command arg)
-    (let (((tuple 'ok response) (q client (list command arg))))
-      (: erlang binary_to_list response)))
+    (let (((tuple 'ok response) (eredis-query client (list command arg))))
+      (format-response response)))
 
 
 (defun do-query (client command arg1 arg2)
-    (let (((tuple 'ok response) (q client (list command arg1 arg2))))
-      (: erlang binary_to_list response)))
+    (let (((tuple 'ok response) (eredis-query client (list command arg1 arg2))))
+      (format-response response)))
 
 
 ; this function is used in the following manner:
@@ -35,14 +28,15 @@
 ;   "barz-1"
 ;
 ; XXX in this function, we should be able to match lambda for 1, 2, 3, 4, etc.,
-; args
+; args; it's broken right now, pending resolution to this issue:
+;   https://github.com/oubiwann/ledis/issues/2
 (defun make-client ()
-  (let (((tuple 'ok client) (start_link)))
+  (let (((tuple 'ok client) (eredis-start)))
     (lambda (command)
       (match-lambda
-        (((list arg))
+        ((arg)
           (do-query client command arg))
-        (((list arg1 arg2))
+        ((arg1 arg2)
           (do-query client command arg1 arg2))))))
 
 
@@ -81,13 +75,3 @@
 
 (defun set (client key value)
   (send client '"SET" key value))
-
-
-; if the get function above was to be defined in a ledis module and then
-; imported into another project, one would call it in the following manner,
-; assuming you had already defined the client:
-;   (get client '"fooz-4')
-
-
-; XXX next, we need to write a macro that lets us pass arbitrary args. this can
-; be used for any-arity calls to start_link
