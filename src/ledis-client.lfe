@@ -7,24 +7,26 @@
                    ((qp 2) eredis-pipeline))))
 
 (defun format-response (response)
+  "Convert binary to list/string."
   (cond ((: erlang is_binary response) (: erlang binary_to_list response))
         ('true response)))
 
-; this is a simple wrapper for making a query
 (defun do-query (client command arg)
-    (let (((tuple 'ok response) (eredis-query client (list command arg))))
-      (format-response response)))
+  "This is a simple wrapper for making a query."
+  (let (((tuple 'ok response) (eredis-query client (list command arg))))
+    (format-response response)))
 
 (defun do-query (client command arg1 arg2)
-    (let (((tuple 'ok response) (eredis-query client (list command arg1 arg2))))
-      (format-response response)))
+  "This is a simple wrapper for making a query."
+  (let (((tuple 'ok response) (eredis-query client (list command arg1 arg2))))
+    (format-response response)))
 
-; this function is used in the following manner:
-;   > (set client (: ledis make-client))
-;   #Fun<ledis.0.66730582>
-;   > (funcall (funcall client 'get) '"fooz-1")
-;   "barz-1"
 (defun make-client ()
+  "Create a client and reference it in closures for later use."
+  ; > (set client (: ledis make-client))
+  ; #Fun<ledis.0.66730582>
+  ; > (funcall (funcall client 'get) '"fooz-1")
+  ; "barz-1"
   (make-client '"127.0.0.1" 6379 0 '""))
 
 (defun make-client (host)
@@ -46,25 +48,23 @@
         (((list arg1 arg2))
           (do-query client command arg1 arg2))))))
 
-; this function is used in the following manner:
-;   > (set client (: ledis make-client))
-;   #Fun<ledis.0.66730582>
-;   > (set function (: ledis get-method client 'get))
-;   #Fun<ledis.1.66730582>
-;   > (funcall function '"fooz-1")
-;   "barz-1"
 (defun get-method (client-maker command)
+  ; > (set client (: ledis make-client))
+  ; #Fun<ledis.0.66730582>
+  ; > (set function (: ledis get-method client 'get))
+  ; #Fun<ledis.1.66730582>
+  ; > (funcall function '"fooz-1")
+  ; "barz-1"
   (funcall client-maker command))
 
 (defun send (client-maker command)
   (funcall (get-method client-maker 'true) command))
 
-; this function is used in the following manner:
-;   > (set client (: ledis make-client))
-;   #Fun<ledis.0.131664084>
-;   > (: ledis send client 'get '"fooz-2")
-;   "barz-2"
 (defun send (client-maker command arg)
+  ; > (set client (: ledis make-client))
+  ; #Fun<ledis.0.131664084>
+  ; > (: ledis send client 'get '"fooz-2")
+  ; "barz-2"
   (funcall (get-method client-maker command) (list arg)))
 
 (defun send (client-maker command arg1 arg2)
