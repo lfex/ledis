@@ -1,5 +1,6 @@
-(defmodule ledis
-  (export all)
+(defmodule ledis-client
+  (export (send 2) (send 3) (send 4)
+          (make-client 0) (make-client 2) (make-client 3) (make-client 4))
   (import
     (rename eredis ((start_link 4) eredis-start)
                    ((q 2) eredis-query)
@@ -35,9 +36,6 @@
 (defun make-client (host port database)
   (make-client host port database '""))
 
-; XXX in this function, we should be able to match lambda for 1, 2, 3, 4, etc.,
-; args; it's broken right now, pending resolution to this issue:
-;   https://github.com/oubiwann/ledis/issues/2
 (defun make-client (host port database password)
   (let (((tuple 'ok client) (eredis-start host port database password)))
     (lambda (command)
@@ -71,20 +69,3 @@
 
 (defun send (client-maker command arg1 arg2)
   (funcall (get-method client-maker command) (list arg1 arg2)))
-
-; this function is used in the following manner:
-;   > (set client (: ledis make-client))
-;   #Fun<ledis.0.87519432>
-;   > (: ledis get client '"fooz-4")
-;   "barz-4"
-(defun get (client-maker key)
-  (send client-maker '"GET" key))
-
-(defun set (client-maker key value)
-  (send client-maker '"SET" key value))
-
-; this function extracts the native eredis client from the client factory,
-; allowing one to execute eredis commands against that client directly, if one
-; so chooses
-(defun eredis-client (client-maker)
-  (send client-maker 'eredis-client))
