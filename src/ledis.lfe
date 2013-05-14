@@ -42,9 +42,9 @@
   (let (((tuple 'ok client) (eredis-start host port database password)))
     (lambda (command)
       (match-lambda
-        ((arg)
+        (((list arg))
           (do-query client command arg))
-        ((arg1 arg2)
+        (((list arg1 arg2))
           (do-query client command arg1 arg2))))))
 
 ; this function is used in the following manner:
@@ -63,10 +63,10 @@
 ;   > (: ledis send client 'get '"fooz-2")
 ;   "barz-2"
 (defun send (client-maker command arg)
-  (funcall (get-method client-maker command) arg))
+  (funcall (get-method client-maker command) (list arg)))
 
 (defun send (client-maker command arg1 arg2)
-  (funcall (get-method client-maker command) arg1 arg2))
+  (funcall (get-method client-maker command) (list arg1 arg2)))
 
 ; this function is used in the following manner:
 ;   > (set client (: ledis make-client))
