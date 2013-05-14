@@ -43,7 +43,7 @@ At this point, you will be able to run an LFE REPL (shell):
 
   $ make shell
 
-and use the library:
+and use the library dependencies:
 
 .. code:: cl
 
@@ -72,11 +72,39 @@ we'll give some examples of using ledis directly.
 Usage
 -----
 
-TBD
+To use ledis from the shell, just do this:
+
+.. code:: bash
+
+  $ make shell
 
 .. code:: cl
 
-  (this is a (test))
+    Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] [async-threads:0] [hipe] [kernel-poll:false]
+
+    LFE Shell V5.9.3 (abort with ^G)
+    > (set client (: ledis-client make-client))
+    #Fun<ledis-client.0.24556364>
+    > (: ledis-api set client '"my-key" '"some cool data")
+    "OK"
+    > (: ledis-api get client '"my-key")
+    "some cool data"
+    >
+
+To use from a LFE code that uses ledis:
+
+.. code:: cl
+
+  (defmodule my-mod
+    (export all)
+    (import (from ledis-client (make-client 0)))
+    (import (from ledis-api (get 2) (set 3))))
+
+  (defun set-and-get ()
+    (let ((client (make-client)))
+      (set client '"key-1" '"data 1")
+      (set client '"key-2" '"data 2")
+      (get client '"key-1")))
 
 .. Links
 .. -----
