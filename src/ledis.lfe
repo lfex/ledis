@@ -42,6 +42,7 @@
   (let (((tuple 'ok client) (eredis-start host port database password)))
     (lambda (command)
       (match-lambda
+        (('eredis-client) client)
         (((list arg))
           (do-query client command arg))
         (((list arg1 arg2))
@@ -56,6 +57,9 @@
 ;   "barz-1"
 (defun get-method (client-maker command)
   (funcall client-maker command))
+
+(defun send (client-maker command)
+  (funcall (get-method client-maker 'true) command))
 
 ; this function is used in the following manner:
 ;   > (set client (: ledis make-client))
@@ -78,3 +82,9 @@
 
 (defun set (client-maker key value)
   (send client-maker '"SET" key value))
+
+; this function extracts the native eredis client from the client factory,
+; allowing one to execute eredis commands against that client directly, if one
+; so chooses
+(defun eredis-client (client-maker)
+  (send client-maker 'eredis-client))
