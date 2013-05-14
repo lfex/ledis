@@ -91,7 +91,7 @@ To use ledis from the shell, just do this:
     "some cool data"
     >
 
-To use from a LFE code that uses ledis:
+To use from an LFE project that imports ledis:
 
 .. code:: cl
 
