@@ -4,7 +4,7 @@
     (from ledis-client (send 2) (send 3) (send 4))))
 
 (defun set (client-maker key value)
-  "key-value Get"
+  "key-value set"
   (send client-maker '"SET" key value))
 
 (defun get (client-maker key)
