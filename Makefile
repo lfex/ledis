@@ -7,12 +7,16 @@ EREDIS_EBIN = $(EREDIS_DIR)/ebin
 ERL_LIBS = $(LFE_DIR):$(EREDIS_DIR):./
 OUT_DIR = ./ebin
 TEST_OUT_DIR = ./.eunit
+TEST_MODS = $(wildcard $(TEST_OUT_DIR)/*.beam)
 
 get-deps:
 	rebar get-deps
 
 clean-ebin:
 	-rm $(OUT_DIR)/*.beam
+
+clean-eunit:
+	-rm -rf $(TEST_OUT_DIR)
 
 compile: get-deps clean-ebin
 	rebar compile
@@ -21,8 +25,16 @@ compile: get-deps clean-ebin
 shell:
 	ERL_LIBS=$(ERL_LIBS) $(LFE)
 
-clean: clean-ebin
+clean: clean-ebin clean-eunit
 	rebar clean
 
-check:
+check: compile
+	rebar eunit verbose=1 skip_deps=true
+	mkdir -p $(TEST_OUT_DIR)
 	ERL_LIBS=$(ERL_LIBS) $(LFEC) -o $(TEST_OUT_DIR) ./test/*.lfe
+	for FILE in $(TEST_MODS); do \
+	F1="$$(basename $$FILE)"; F2=$${F1%.*}; \
+	ERL_LIBS=$(ERL_LIBS) \
+	erl -pa $(TEST_OUT_DIR) -noshell \
+	-eval "eunit:test($$F2, [verbose])" \
+	-s init stop; done
