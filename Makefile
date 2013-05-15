@@ -6,6 +6,7 @@ EREDIS_DIR = ./deps/eredis
 EREDIS_EBIN = $(EREDIS_DIR)/ebin
 ERL_LIBS = $(LFE_DIR):$(EREDIS_DIR):./
 OUT_DIR = ./ebin
+TEST_OUT_DIR = ./.eunit
 
 get-deps:
 	rebar get-deps
@@ -22,3 +23,6 @@ shell:
 
 clean: clean-ebin
 	rebar clean
+
+check:
+	ERL_LIBS=$(ERL_LIBS) $(LFEC) -o $(TEST_OUT_DIR) ./test/*.lfe
