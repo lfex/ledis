@@ -34,7 +34,8 @@ check: compile
 	ERL_LIBS=$(ERL_LIBS) $(LFEC) -o $(TEST_OUT_DIR) ./test/*.lfe
 	for FILE in $(TEST_MODS); do \
 	F1="$$(basename $$FILE)"; F2=$${F1%.*}; \
+	echo $$F2; done|sed -e :a -e '$$!N; s/\n/,/; ta' | \
 	ERL_LIBS=$(ERL_LIBS) \
-	erl -pa $(TEST_OUT_DIR) -noshell \
-	-eval "eunit:test($$F2, [verbose])" \
-	-s init stop; done
+	xargs -I % erl -pa $(TEST_OUT_DIR) -noshell \
+	-eval "eunit:test([%], [verbose])" \
+	-s init stop
