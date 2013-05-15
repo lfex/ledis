@@ -3,5 +3,5 @@
 
 (include-lib "eunit/include/eunit.hrl")
 
-(defun test-test ()
+(defun test_test ()
   'false)
