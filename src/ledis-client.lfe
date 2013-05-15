@@ -2,9 +2,10 @@
   (export (send 2) (send 3) (send 4)
           (make-client 0) (make-client 2) (make-client 3) (make-client 4))
   (import
-    (rename eredis ((start_link 4) eredis-start)
-                   ((q 2) eredis-query)
-                   ((qp 2) eredis-pipeline))))
+    (rename eredis
+      ((start_link 4) eredis-start)
+      ((q 2) eredis-query)
+      ((qp 2) eredis-pipeline))))
 
 (defun format-response (response)
   "Convert binary to list/string."
