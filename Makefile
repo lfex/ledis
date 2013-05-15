@@ -22,3 +22,6 @@ shell:
 
 clean: clean-ebin
 	rebar clean
+
+check:
+	rebar eunit skip_deps=true verbose=1
