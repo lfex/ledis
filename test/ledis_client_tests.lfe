@@ -1,4 +1,4 @@
-(defmodule ledis-client-tests
+(defmodule ledis_client_tests
   (export all))
 
 (include-lib "eunit/include/eunit.hrl")
