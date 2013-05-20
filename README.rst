@@ -26,6 +26,8 @@ automatically when you run the ``compile`` target:
 
 * `eredis`_
 
+* `lfeunit`_
+
 Installtion and Setup
 ---------------------
 
@@ -113,3 +115,4 @@ To use from an LFE project that imports ledis:
 .. _Redis: http://redis.io/
 .. _rebar: https://github.com/rebar/rebar
 .. _eredis: https://github.com/wooga/eredis
+.. _lfeunit: https://github.com/lfe/lfeunit
