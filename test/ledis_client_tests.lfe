@@ -1,7 +1,7 @@
 (defmodule ledis_client_tests
   (export all))
 
-(include-lib "eunit/include/eunit.hrl")
+(include-lib "include/lfeunit.lfe")
 
 (defun test_test ()
   "this test generates a bad match error intentionally"
