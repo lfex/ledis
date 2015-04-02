@@ -2,12 +2,17 @@
   (export all))
 
 (defun start-link ()
-  (start-link (eredis:start_link)))
+  (start-link '()))
+
+(defun start-link (options)
+  "The 'options' argument may be a combination of ledis options and eredis
+  options."
+  (start-link (eredis:start_link options) options))
 
 (defun start-link
-  ((`#(ok ,pid))
-   (register (ledis-cfg:client-process) pid))
-  ((result)
+  ((`#(ok ,pid) options)
+   (register (ledis-cfg:get-client-process-name) pid))
+  ((result options)
    result))
 
 (defun start_link ()
@@ -30,10 +35,10 @@
     options))
 
 (defun get-client ()
-  (whereis (ledis-cfg:client-process)))
+  (whereis (ledis-cfg:get-client-process-name)))
 
 (defun parse-result
   (((= `#(,status ,data) result) options)
-   (case (proplists:get_value 'return-type options 'binary)
+   (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
      ('binary result)
      ('string `#(,status ,(binary_to_list data))))))
