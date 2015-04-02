@@ -73,25 +73,24 @@ $ make repl-no-deps
 Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] [async-threads:0] [hipe] [kernel-poll:false]
 
 LFE Shell V5.9.3 (abort with ^G)
-> (set client (ledis-client:make-client))
-#Fun<ledis-client.0.24556364>
-> (ledis-api:set client "my-key" "some cool data")
-"OK"
-> (ledis-api:get client "my-key")
-"some cool data"
+>
+```
+```cl
+> (ledis:start-link)
+true
+> (ledis:get 'foo)
+#(ok undefined)
+> (ledis:set 'foo 'bar)
+#(ok #B(79 75))
+> (ledis:get 'foo)
+#(ok #B(118 97 108 117 101))
 ```
 
-To use from an LFE project that imports ledis:
+You may also provide an option to convert all results to string values:
 
 ```cl
-(defmodule my-mod
-  (export all)
-  (import (from ledis-client (make-client 0)))
-  (import (from ledis-api (get 2) (set 3))))
-
-(defun set-and-get ()
-  (let ((client (make-client)))
-    (set client "key-1" "data 1")
-    (set client "key-2" "data 2")
-    (get client "key-1")))
+> (ledis:set 'foo 'bar '(#(return-type string)))
+#(ok "OK")
+> (ledis:get 'foo '(#(return-type string)))
+#(ok "bar")
 ```
