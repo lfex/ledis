@@ -37,6 +37,22 @@
     (eredis:q (get-client) `("GET" ,key))
     options))
 
+(defun incr (key)
+  (incr key '()))
+
+(defun incr (key options)
+  (parse-result
+    (eredis:q (get-client) `("INCR" ,key))
+    options))
+
+(defun incrby (key value)
+  (incrby key value '()))
+
+(defun incrby (key value options)
+  (parse-result
+    (eredis:q (get-client) `("INCRBY" ,key ,value))
+    options))
+
 (defun get-client ()
   (whereis (ledis-cfg:get-client-process-name)))
 
