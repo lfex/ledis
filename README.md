@@ -26,7 +26,7 @@ automatically when you run the ``compile`` target:
 Here's what you need to do:
 
 ```bash
-$ git clone https://github.com/oubiwann/ledis.git
+$ git clone https://github.com/lfex/ledis.git
 $ cd ledis
 $ make compile
 ```
