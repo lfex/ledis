@@ -1,6 +1,6 @@
 # ledis
 
-*An LFE wrapper for the eredis library*
+*An LFE Redis Client Library*
 
 <img src="resources/logos/ButterCrunchLettuce-2-small.png" />
 
@@ -40,22 +40,22 @@ $ make repl
 and use the library dependencies:
 
 ```cl
-Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] [async-threads:0] [hipe] [kernel-poll:false]
+Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] ...
 
 LFE Shell V5.9.3 (abort with ^G)
-> (set (tuple 'ok client) (: eredis start_link))
+> (set `#(ok ,client) (eredis:start_link))
 #(ok <0.31.0>)
-> (: eredis q client '("SET" "fooz42" "barz42"))
+> (eredis:q client '("SET" "fooz42" "barz42"))
 #(ok #B(79 75))
-> (: eredis q client '("GET" "fooz42"))
+> (eredis:q client '("GET" "fooz42"))
 #(ok #B(98 97 114 122 52 50))
-> (: eredis q client '("GET" "fooz43"))
+> (eredis:q client '("GET" "fooz43"))
 #(ok undefined)
-> (set (tuple 'ok result) (: eredis q client '("GET" "fooz42")))
+> (set `#(ok ,result) (eredis:q client '("GET" "fooz42")))
 #(ok #B(98 97 114 122 52 50))
 > result
 #B(98 97 114 122 52 50)
-> (: erlang binary_to_list result)
+> (erlang:binary_to_list result)
 "barz42"
 ```
 That's just an example on how to use eredis from LFE. In the next section,
@@ -73,11 +73,11 @@ $ make repl-no-deps
 Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] [async-threads:0] [hipe] [kernel-poll:false]
 
 LFE Shell V5.9.3 (abort with ^G)
-> (set client (: ledis-client make-client))
+> (set client (ledis-client:make-client))
 #Fun<ledis-client.0.24556364>
-> (: ledis-api set client '"my-key" '"some cool data")
+> (ledis-api:set client "my-key" "some cool data")
 "OK"
-> (: ledis-api get client '"my-key")
+> (ledis-api:get client "my-key")
 "some cool data"
 ```
 
