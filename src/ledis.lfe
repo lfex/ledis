@@ -18,6 +18,9 @@
 (defun start_link ()
   (start-link))
 
+(defun start ()
+  (start-link))
+
 (defun set (key value)
   (set key value '()))
 
