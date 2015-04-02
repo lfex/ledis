@@ -1,16 +1,16 @@
-(defmodule ledis_client_tests
+(defmodule ledis-client-tests
   (export all))
 
-(include-lib "include/lfeunit.lfe")
+(include-lib "ltest/include/ltest-macros.lfe")
 
-(defun test_test ()
+(deftest test
   "this test generates a bad match error intentionally"
   (let (((tuple 'ok 'true) (list 1 2)))))
 
-(defun assert_test ()
+(deftest is
   "is assert available in the namespace?"
   (=:= (+ 1 1) 2))
 
-(defun another_test ()
+(deftest another-test
   "just filler ..."
   'true)
