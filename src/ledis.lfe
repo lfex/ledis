@@ -61,6 +61,12 @@
 (defun get (key options)
   (cmd `("GET" ,key) options))
 
+(defun getset (key val)
+  (getset key val '()))
+
+(defun getset (key val options)
+  (cmd `("GETSET" ,key ,val) options))
+
 (defun incr (key)
   (incr key '()))
 
