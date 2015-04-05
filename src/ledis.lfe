@@ -22,16 +22,18 @@
 (defun start ()
   (start-link))
 
-(defun cmd (cmd options)
-  "This is a general-purpose function that all ledis functions should use when
-  making calls to Redis."
-  (logjam:debug (MODULE) 'cmd/2 "Command: ~p" `(,cmd))
-  (parse-result
-    (eredis:q (get-client) cmd)
-    options))
+;;; Generated API functions
 
-(defun set (key value)
-  (set key value '()))
+(include-lib "ledis/include/ledis.lfe")
+
+
+;;; Hand-wrought API functions - this is for functions which require special
+;;; handling of options, usually in the form of keywords/proplists; simple
+;;; positional arguments are handled by the macros which automatically generate
+;;; ledis API functions.
+
+;; (defun set (key value)
+;;   (set key value '()))
 
 (defun set (key value options)
   (let ((cmd (list* "SET" key value (make-set-options options))))
@@ -55,41 +57,15 @@
    '("XX"))
   ((_) '()))
 
-(defun get (key)
-  (get key '()))
+;;; General purpose functions for use by API functions
 
-(defun get (key options)
-  (cmd `("GET" ,key) options))
-
-(defun getset (key val)
-  (getset key val '()))
-
-(defun getset (key val options)
-  (cmd `("GETSET" ,key ,val) options))
-
-(defun incr (key)
-  (incr key '()))
-
-(defun incr (key options)
-  (cmd `("INCR" ,key) options))
-
-(defun incrby (key value)
-  (incrby key value '()))
-
-(defun incrby (key value options)
-  (cmd `("INCRBY" ,key ,value) options))
-
-(defun decr (key)
-  (decr key '()))
-
-(defun decr (key options)
-  (cmd `("DECR" ,key) options))
-
-(defun decrby (key value)
-  (decrby key value '()))
-
-(defun decrby (key value options)
-  (cmd `("DECRBY" ,key ,value) options))
+(defun cmd (cmd options)
+  "This is a general-purpose function that all ledis functions should use when
+  making calls to Redis."
+  (logjam:debug (MODULE) 'cmd/2 "Command: ~p" `(,cmd))
+  (parse-result
+    (eredis:q (get-client) cmd)
+    options))
 
 (defun get-client ()
   (whereis (ledis-cfg:get-client-process-name)))
