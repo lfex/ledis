@@ -22,15 +22,20 @@
 (defun start ()
   (start-link))
 
+(defun cmd (cmd options)
+  "This is a general-purpose function that all ledis functions should use when
+  making calls to Redis."
+  (logjam:debug (MODULE) 'cmd/2 "Command: ~p" `(,cmd))
+  (parse-result
+    (eredis:q (get-client) cmd)
+    options))
+
 (defun set (key value)
   (set key value '()))
 
 (defun set (key value options)
   (let ((cmd (list* "SET" key value (make-set-options options))))
-    (logjam:debug (MODULE) 'set/3 "Command: ~p" `(,cmd))
-    (parse-result
-      (eredis:q (get-client) cmd)
-      options)))
+    (cmd cmd options)))
 
 (defun make-set-options (options)
   (lists:foldl
@@ -54,25 +59,19 @@
   (get key '()))
 
 (defun get (key options)
-  (parse-result
-    (eredis:q (get-client) `("GET" ,key))
-    options))
+  (cmd `("GET" ,key) options))
 
 (defun incr (key)
   (incr key '()))
 
 (defun incr (key options)
-  (parse-result
-    (eredis:q (get-client) `("INCR" ,key))
-    options))
+  (cmd `("INCR" ,key) options))
 
 (defun incrby (key value)
   (incrby key value '()))
 
 (defun incrby (key value options)
-  (parse-result
-    (eredis:q (get-client) `("INCRBY" ,key ,value))
-    options))
+  (cmd `("INCRBY" ,key ,value) options))
 
 (defun get-client ()
   (whereis (ledis-cfg:get-client-process-name)))
