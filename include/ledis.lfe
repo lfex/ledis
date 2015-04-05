@@ -12,6 +12,7 @@
       (multi-get 1)
       (exists 1)
       (del 1)
+      (type 1)
       ))
 
   (defun get-api-funcs-with-opts ()
@@ -22,6 +23,7 @@
       (decr 2)
       (decrby 3)
       (exists 2)
+      (type 2)
       ))
 
   ;; end of eval-when-compile
