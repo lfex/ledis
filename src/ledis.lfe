@@ -7,6 +7,7 @@
 (defun start-link (options)
   "The 'options' argument may be a combination of ledis options and eredis
   options."
+  (logjam:setup)
   (start-link (eredis:start_link options) options))
 
 (defun start-link
@@ -25,9 +26,29 @@
   (set key value '()))
 
 (defun set (key value options)
-  (parse-result
-    (eredis:q (get-client) `("SET" ,key ,value))
+  (let ((cmd (list* "SET" key value (make-set-options options))))
+    (logjam:debug (MODULE) 'set/3 "Command: ~p" `(,cmd))
+    (parse-result
+      (eredis:q (get-client) cmd)
+      options)))
+
+(defun make-set-options (options)
+  (lists:foldl
+    (lambda (x accum)
+      (++ accum (make-set-option x)))
+    '()
     options))
+
+(defun make-set-option
+  ((`#(ex ,value))
+   `("EX" ,value))
+  ((`#(px ,value))
+   `("PX" ,value))
+  ((#(nx))
+   '("NX"))
+  ((#(xx))
+   '("XX"))
+  ((_) '()))
 
 (defun get (key)
   (get key '()))
@@ -57,7 +78,10 @@
   (whereis (ledis-cfg:get-client-process-name)))
 
 (defun parse-result
+  (((= `#(,status ,data) result) options) (when (is_atom data))
+   result)
   (((= `#(,status ,data) result) options)
+   (logjam:debug (MODULE) 'parse-result/2 "Result: ~p" `(,result))
    (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
      ('binary result)
      ('string `#(,status ,(binary_to_list data))))))
