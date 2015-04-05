@@ -57,6 +57,32 @@
    '("XX"))
   ((_) '()))
 
+;; The next two functions can't be named like the Redis names (mset and mget),
+;; as they would conflict with the LFE functions of the same name.
+
+(defun multi-set (pairs options)
+  (cmd `("MSET" ,@pairs) options))
+
+(defun multi-get (keys options)
+  (cmd `("MGET" ,@keys) options))
+
+(defun del
+  ((key options) (when (is_atom key))
+   (del-single key options))
+  ((key-or-keys options)
+   (cond ((io_lib:printable_unicode_list key-or-keys)
+          (del-single key-or-keys options))
+         ((is_list key-or-keys)
+          (del-multi key-or-keys options))
+         ('true
+          (del-single key-or-keys options)))))
+
+(defun del-single (key options)
+  (cmd `("DEL" ,key) options))
+
+(defun del-multi (keys options)
+  (cmd `("DEL" ,@keys) options))
+
 ;;; General purpose functions for use by API functions
 
 (defun cmd (cmd options)
@@ -73,6 +99,10 @@
 (defun parse-result
   (((= `#(,status ,data) result) options) (when (is_atom data))
    result)
+  (((= `#(,status ,data) result) options) (when (is_list data))
+   (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
+     ('binary result)
+     ('string `#(,status ,(lists:map #'binary_to_list/1 data)))))
   (((= `#(,status ,data) result) options)
    (logjam:debug (MODULE) 'parse-result/2 "Result: ~p" `(,result))
    (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))

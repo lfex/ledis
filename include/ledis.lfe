@@ -8,6 +8,10 @@
       (incrby 2)
       (decr 1)
       (decrby 2)
+      (multi-set 1)
+      (multi-get 1)
+      (exists 1)
+      (del 1)
       ))
 
   (defun get-api-funcs-with-opts ()
@@ -17,6 +21,7 @@
       (incrby 3)
       (decr 2)
       (decrby 3)
+      (exists 2)
       ))
 
   ;; end of eval-when-compile
