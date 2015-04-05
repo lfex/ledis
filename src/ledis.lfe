@@ -73,6 +73,18 @@
 (defun incrby (key value options)
   (cmd `("INCRBY" ,key ,value) options))
 
+(defun decr (key)
+  (decr key '()))
+
+(defun decr (key options)
+  (cmd `("DECR" ,key) options))
+
+(defun decrby (key value)
+  (decrby key value '()))
+
+(defun decrby (key value options)
+  (cmd `("DECRBY" ,key ,value) options))
+
 (defun get-client ()
   (whereis (ledis-cfg:get-client-process-name)))
 
