@@ -9,7 +9,7 @@
 * [Dependences](#dependences-)
 * [Installtion and Setup](#installtion-and-setup-)
 * [Usage](#usage-)
-* [Difference from Redis CLI](#difference-from-redis-cli-)
+  * [Difference from Redis CLI](#difference-from-redis-cli-)
 
 
 ## Dependences [&#x219F;](#table-of-contents)
