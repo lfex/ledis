@@ -65,6 +65,46 @@
                     (ledis-util:make-options #'make-start-end-option/1 options))))
     (cmd cmd options)))
 
+(defun blpop
+  ((key timeout options) (when (is_atom key))
+   (blpop-single key timeout options))
+  ((key-or-keys timeout options)
+   (cond ((io_lib:printable_unicode_list key-or-keys)
+          (blpop-single key-or-keys timeout options))
+         ((is_list key-or-keys)
+          (blpop-multi key-or-keys timeout options))
+         ('true
+          (blpop-single key-or-keys timeout options)))))
+
+(defun blpop-single (key timeout options)
+  (cmd `("BLPOP" ,key ,timeout) options))
+
+(defun blpop-multi (keys timeout options)
+  (cmd `("BLPOP" ,@keys ,timeout) options))
+
+(defun brpop
+  ((key timeout options) (when (is_atom key))
+   (brpop-single key timeout options))
+  ((key-or-keys timeout options)
+   (cond ((io_lib:printable_unicode_list key-or-keys)
+          (brpop-single key-or-keys timeout options))
+         ((is_list key-or-keys)
+          (brpop-multi key-or-keys timeout options))
+         ('true
+          (brpop-single key-or-keys timeout options)))))
+
+(defun brpop-single (key timeout options)
+  (cmd `("BRPOP" ,key ,timeout) options))
+
+(defun brpop-multi (keys timeout options)
+  (cmd `("BRPOP" ,@keys ,timeout) options))
+
+(defun client-list (options)
+  (case (cmd '("CLIENT" "LIST") options)
+    (`#(ok ,clients)
+     `#(ok ,(string:tokens clients "\n")))
+    (x x)))
+
 (defun del
   ((key options) (when (is_atom key))
    (del-single key options))
@@ -82,6 +122,29 @@
 (defun del-multi (keys options)
   (cmd `("DEL" ,@keys) options))
 
+(defun lpush
+  ((key value options) (when (is_atom value))
+   (lpush-single key value options))
+  ((key value-or-values options)
+   (cond ((io_lib:printable_unicode_list value-or-values)
+          (lpush-single key value-or-values options))
+         ((is_list value-or-values)
+          (lpush-multi key value-or-values options))
+         ('true
+          (lpush-single key value-or-values options)))))
+
+(defun lpush-single (key value options)
+  (cmd `("LPUSH" ,key ,value) options))
+
+(defun lpush-multi (key values options)
+  (cmd `("LPUSH" ,key ,@values) options))
+
+(defun lrange (key)
+  (lrange key '()))
+
+(defun lrange (key options)
+  (lrange key 0 -1 options))
+
 ;; The next two functions can't be named like the Redis names (mset and mget),
 ;; as they would conflict with the LFE functions of the same name.
 
@@ -90,6 +153,23 @@
 
 (defun multi-get (keys options)
   (cmd `("MGET" ,@keys) options))
+
+(defun rpush
+  ((key value options) (when (is_atom value))
+   (rpush-single key value options))
+  ((key value-or-values options)
+   (cond ((io_lib:printable_unicode_list value-or-values)
+          (rpush-single key value-or-values options))
+         ((is_list value-or-values)
+          (rpush-multi key value-or-values options))
+         ('true
+          (rpush-single key value-or-values options)))))
+
+(defun rpush-single (key value options)
+  (cmd `("RPUSH" ,key ,value) options))
+
+(defun rpush-multi (key values options)
+  (cmd `("RPUSH" ,key ,@values) options))
 
 (defun set (key value options)
   (let ((cmd (list* "SET"

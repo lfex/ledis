@@ -145,6 +145,15 @@ usage.
 #(ok "-1")
 ```
 
+#### ``blpop`` [&#x219F;](#table-of-contents)
+
+```lisp
+> (ledis:blpop 'list1 0)
+#(ok ("list1" "banana"))
+> (ledis:blpop '(list2 list3 list1) 0)
+#(ok ("list1" "tranbar"))
+```
+
 #### ``del`` [&#x219F;](#table-of-contents)
 
 ```lisp
@@ -156,6 +165,21 @@ usage.
 #(ok "OK")
 > (ledis:del '(key1 key2 key3 key4))
 #(ok "3")
+```
+
+#### ``lrange`` [&#x219F;](#table-of-contents)
+
+In addition to ``lrange/3`` and ``lrange/4`` (which offers the same signature as
+associated Redis commands, with the 4-arity function also allowing options to be
+passed), ledis offers two additional arities for this function. Arity-1 and
+arity-2 will return the entire list at the given key:
+
+```lisp
+> (ledis:lrange 'fruits)
+#(ok
+  ("banana"
+   "tranbar"
+   "kiwi"))
 ```
 
 #### ``M*`` renamed to ``multi-*`` [&#x219F;](#table-of-contents)
