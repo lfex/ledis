@@ -65,22 +65,6 @@
                     (ledis-util:make-options #'make-start-end-option/1 options))))
     (cmd cmd options)))
 
-(defun set (key value options)
-  (let ((cmd (list* "SET"
-                    key
-                    value
-                    (ledis-util:make-options #'make-set-option/1 options))))
-    (cmd cmd options)))
-
-;; The next two functions can't be named like the Redis names (mset and mget),
-;; as they would conflict with the LFE functions of the same name.
-
-(defun multi-set (pairs options)
-  (cmd `("MSET" ,@pairs) options))
-
-(defun multi-get (keys options)
-  (cmd `("MGET" ,@keys) options))
-
 (defun del
   ((key options) (when (is_atom key))
    (del-single key options))
@@ -98,6 +82,22 @@
 (defun del-multi (keys options)
   (cmd `("DEL" ,@keys) options))
 
+;; The next two functions can't be named like the Redis names (mset and mget),
+;; as they would conflict with the LFE functions of the same name.
+
+(defun multi-set (pairs options)
+  (cmd `("MSET" ,@pairs) options))
+
+(defun multi-get (keys options)
+  (cmd `("MGET" ,@keys) options))
+
+(defun set (key value options)
+  (let ((cmd (list* "SET"
+                    key
+                    value
+                    (ledis-util:make-options #'make-set-option/1 options))))
+    (cmd cmd options)))
+
 ;;; General purpose functions for use by API functions
 
 (defun cmd (cmd options)
@@ -110,19 +110,6 @@
 
 (defun get-client ()
   (whereis (ledis-cfg:get-client-process-name)))
-
-(defun parse-result
-  (((= `#(,status ,data) result) options) (when (is_atom data))
-   result)
-  (((= `#(,status ,data) result) options) (when (is_list data))
-   (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
-     ('binary result)
-     ('string `#(,status ,(lists:map #'binary_to_list/1 data)))))
-  (((= `#(,status ,data) result) options)
-   (logjam:debug (MODULE) 'parse-result/2 "Result: ~p" `(,result))
-   (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
-     ('binary result)
-     ('string `#(,status ,(binary_to_list data))))))
 
 (defun make-set-option
   ((`#(ex ,value))
@@ -140,3 +127,17 @@
    `(,start))
   ((`#(end ,end))
    `(,end)))
+
+(defun parse-result
+  (((= `#(,status ,data) result) options) (when (is_atom data))
+   result)
+  (((= `#(,status ,data) result) options) (when (is_list data))
+   (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
+     ('binary result)
+     ('string `#(,status ,(lists:map #'binary_to_list/1 data)))))
+  (((= `#(,status ,data) result) options)
+   (logjam:debug (MODULE) 'parse-result/2 "Result: ~p" `(,result))
+   (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
+     ('binary result)
+     ('string `#(,status ,(binary_to_list data))))))
+
