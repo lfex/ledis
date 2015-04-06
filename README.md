@@ -4,8 +4,15 @@
 
 <img src="resources/logos/ButterCrunchLettuce-2-small.png" />
 
+## Table of Contents
 
-## Dependences
+* [Dependences](#dependences-)
+* [Installtion and Setup](#installtion-and-setup-)
+* [Usage](#usage-)
+* [Difference from Redis CLI](#difference-from-redis-cli-)
+
+
+## Dependences [&#x219F;](#table-of-contents)
 
 You will need the following installed on your system:
 
@@ -21,7 +28,7 @@ automatically when you run the ``compile`` target:
 * ltest
 
 
-## Installtion and Setup
+## Installtion and Setup [&#x219F;](#table-of-contents)
 
 Here's what you need to do:
 
@@ -38,7 +45,7 @@ $ make repl
 ```
 
 
-## Usage
+## Usage [&#x219F;](#table-of-contents)
 
 To use ledis from the shell, just do this:
 
@@ -79,4 +86,96 @@ following:
 #(ledis
   (#(client-process-name ledis-client)
    #(return-type string)))
+```
+
+
+### Difference from Redis CLI [&#x219F;](#table-of-contents)
+
+Since LFE is a fixed-arity language, a few differences exist between ledis and
+the Redis CLI. These usually are for the following scenarios:
+
+1. Optional command arguments which have been converted to LFE as options (using
+   proplists).
+1. Some Redis commands conflict with LFE functions/macros, and these have been
+   renamed.
+1. Some variable arity commands are converted to single-arity in LFE where the
+   single argument is a list.
+
+Functions which are different in these ways have been listed below with sample
+usage.
+
+#### ``bitcount`` [&#x219F;](#table-of-contents)
+
+```lisp
+> (ledis:bitcount 'foo)
+#(ok "10")
+> (ledis:bitcount 'foo '(#(start 2) #(end 4)))
+#(ok "4")
+```
+
+#### ``bitop`` [&#x219F;](#table-of-contents)
+
+```lisp
+> (ledis:set 'key1 "foobar")
+#(ok "OK")
+> (ledis:set 'key2 "absdef")
+#(ok "OK")
+> (ledis:bitop 'AND 'dest '(key1 key2))
+#(ok "6")
+> (ledis:get 'dest)
+#(ok "`bc`ab")
+```
+
+#### ``bitpos`` [&#x219F;](#table-of-contents)
+
+```lisp
+> (ledis:set 'mykey #b(#xff #xf0 #x00))
+#(ok "OK")
+> (ledis:bitpos 'mykey 0)
+#(ok "12")
+> (ledis:set 'mykey #b(#x00 #xff #xf0))
+#(ok "OK")
+> (ledis:bitpos 'mykey 1 '(#(start 1)))
+#(ok "8")
+> (ledis:bitpos 'mykey 1 '(#(start 2)))
+#(ok "16")
+> (ledis:set 'mykey #b(#x00 #x00 #x00))
+#(ok "OK")
+> (ledis:bitpos 'mykey 1)
+#(ok "-1")
+```
+
+#### ``del`` [&#x219F;](#table-of-contents)
+
+```lisp
+> (ledis:set 'mykey "Hello")
+#(ok "OK")
+> (ledis:del 'mykey)
+#(ok "1")
+> (ledis:multi-set '(key1 "val1" key2 "val2" key3 "val3"))
+#(ok "OK")
+> (ledis:del '(key1 key2 key3 key4))
+#(ok "3")
+```
+
+#### ``M*`` renamed to ``multi-*`` [&#x219F;](#table-of-contents)
+
+```lisp
+> (ledis:multi-set '(a 10 b 20 c 30))
+#(ok "OK")
+> (ledis:multi-get '(a b c))
+#(ok ("10" "20" "30"))
+```
+
+#### ``set`` [&#x219F;](#table-of-contents)
+
+```lisp
+> (ledis:set 'mykey "athirdvalue" '(#(xx) #(px 10000)))
+#(ok "OK")
+> (ledis:get 'mykey)
+#(ok "athirdvalue")
+> (timer:sleep 10000)
+ok
+> (ledis:get 'mykey)
+#(ok undefined)
 ```

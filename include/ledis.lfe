@@ -1,7 +1,14 @@
 (eval-when-compile
 
   (defun get-api-funcs-no-opts ()
-    '((set 2)
+    '((append 2)
+      (auth 1)
+      (bgrewriteaof 0)
+      (bgsave 0)
+      (bitcount 1)
+      (bitop 3)
+      (bitpos 2)
+      (set 2)
       (get 1)
       (getset 2)
       (incr 1)
@@ -16,7 +23,11 @@
       ))
 
   (defun get-api-funcs-with-opts ()
-    '((get 2)
+    '((append 3)
+      (auth 2)
+      (bgrewriteaof 1)
+      (bgsave 1)
+      (get 2)
       (getset 3)
       (incr 2)
       (incrby 3)

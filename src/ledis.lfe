@@ -26,36 +26,51 @@
 
 (include-lib "ledis/include/ledis.lfe")
 
-
 ;;; Hand-wrought API functions - this is for functions which require special
 ;;; handling of options, usually in the form of keywords/proplists; simple
 ;;; positional arguments are handled by the macros which automatically generate
 ;;; ledis API functions.
 
-;; (defun set (key value)
-;;   (set key value '()))
-
-(defun set (key value options)
-  (let ((cmd (list* "SET" key value (make-set-options options))))
+(defun bitcount (key options)
+  (let ((cmd (list* "BITCOUNT"
+                    key
+                    (ledis-util:make-options #'make-start-end-option/1 options))))
     (cmd cmd options)))
 
-(defun make-set-options (options)
-  (lists:foldl
-    (lambda (x accum)
-      (++ accum (make-set-option x)))
-    '()
-    options))
+(defun bitop
+  ((operation destkey key options) (when (is_atom key))
+   (bitop-single operation destkey key options))
+  ((operation destkey key-or-keys options)
+   (cond ((io_lib:printable_unicode_list key-or-keys)
+          (bitop-single operation destkey key-or-keys options))
+         ((is_list key-or-keys)
+          (bitop-multi operation destkey key-or-keys options))
+         ('true
+          (bitop-single operation destkey key-or-keys options)))))
 
-(defun make-set-option
-  ((`#(ex ,value))
-   `("EX" ,value))
-  ((`#(px ,value))
-   `("PX" ,value))
-  ((#(nx))
-   '("NX"))
-  ((#(xx))
-   '("XX"))
-  ((_) '()))
+(defun convert-op (op)
+  (string:to_upper
+    (atom_to_list op)))
+
+(defun bitop-single (operation destkey key options)
+  (cmd `("BITOP" ,(convert-op operation) ,destkey ,key) options))
+
+(defun bitop-multi (operation destkey keys options)
+  (cmd `("BITOP" ,(convert-op operation) ,destkey ,@keys) options))
+
+(defun bitpos (key bit options)
+  (let ((cmd (list* "BITPOS"
+                    key
+                    bit
+                    (ledis-util:make-options #'make-start-end-option/1 options))))
+    (cmd cmd options)))
+
+(defun set (key value options)
+  (let ((cmd (list* "SET"
+                    key
+                    value
+                    (ledis-util:make-options #'make-set-option/1 options))))
+    (cmd cmd options)))
 
 ;; The next two functions can't be named like the Redis names (mset and mget),
 ;; as they would conflict with the LFE functions of the same name.
@@ -108,3 +123,20 @@
    (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
      ('binary result)
      ('string `#(,status ,(binary_to_list data))))))
+
+(defun make-set-option
+  ((`#(ex ,value))
+   `("EX" ,value))
+  ((`#(px ,value))
+   `("PX" ,value))
+  ((#(nx))
+   '("NX"))
+  ((#(xx))
+   '("XX"))
+  ((_) '()))
+
+(defun make-start-end-option
+  ((`#(start ,start))
+   `(,start))
+  ((`#(end ,end))
+   `(,end)))

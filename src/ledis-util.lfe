@@ -36,3 +36,13 @@
     (lambda (x)
       (make-func-options x))
     func-list))
+
+(defun binlist->strlist (data)
+  (lists:map #'binary_to_list/1 data))
+
+(defun make-options (func options)
+  (lists:foldl
+    (lambda (x accum)
+      (++ accum (funcall func x)))
+    '()
+    options))
