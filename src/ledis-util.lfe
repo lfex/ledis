@@ -15,14 +15,16 @@
          (,func-name ,@func-args '())))))
 
 (defun make-redis-name (func-name)
-  (string:to_upper
-    (atom_to_list func-name)))
+  (string:tokens
+    (string:to_upper
+      (atom_to_list func-name))
+    "-"))
 
 (defun make-func-options
   ((`(,func-name ,func-arity))
     (let ((func-args (kla:make-args (- func-arity 1))))
       `(defun ,func-name (,@func-args options)
-         (cmd (list ,(make-redis-name func-name) ,@func-args)
+         (cmd (list ,@(make-redis-name func-name) ,@func-args)
               options)))))
 
 (defun make-funcs-no-options (func-list)
