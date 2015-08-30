@@ -10,6 +10,7 @@
 * [Installtion and Setup](#installtion-and-setup-)
 * [Usage](#usage-)
   * [Difference from Redis CLI](#difference-from-redis-cli-)
+* [A Note for Developers](#a-note-for-developers-)
 
 
 ## Dependences [&#x219F;](#table-of-contents)
@@ -226,3 +227,23 @@ ok
 > (ledis:get 'mykey)
 #(ok undefined)
 ```
+
+## A Note for Developers [&#x219F;](#table-of-contents)
+
+If you have an interest in making contributions to this library, you'll need to
+make note of how the wrappring works.
+
+* For every *n*-arity function you wish to add (wrap), you'll also need to add
+  an *n+1*-arity function of the same name. This is because ledis supports
+  (requires) a version of every function that takes LFE-specific options (e.g.,
+  setting return types).
+* Under most circumstances, this just means making an entry in the functions
+  ``get-api-funcs-no-opts`` and ``get-api-funcs-with-opts`` in the file
+  ``include/ledis.lfe``.
+* Non-normal circumstances include supporting Redis functions of mixed arity,
+  special options, and non-standard or irregular function arguments. In these
+  cases, you will often be able to make an entry in ``get-api-funcs-no-opts``,
+  but have to then create a custom *n+1*-arity function in ``src/ledis.lfe``.
+  Sometimes you won't be able to use either of the API-generating functions and
+  macros, and will instead need to implement both the *n*-arity and *n+1*-arity
+  functions in ``src/ledis.lfe``.
