@@ -17,10 +17,12 @@
    result))
 
 (defun start_link ()
-  (start-link))
+  (case (get-client)
+    ('undefined (start-link))
+    (_ #(error already-started))))
 
 (defun start ()
-  (start-link))
+  (start_link))
 
 ;;; Generated API functions
 
@@ -178,6 +180,51 @@
                     (ledis-util:make-options #'make-set-option/1 options))))
     (cmd cmd options)))
 
+(defun hdel
+  ((key field options) (when (is_atom field))
+   (hdel-single key field options))
+  ((key field-or-fields options)
+   (cond ((io_lib:printable_unicode_list field-or-fields)
+          (hdel-single key field-or-fields options))
+         ((is_list field-or-fields)
+          (hdel-multi key field-or-fields options))
+         ('true
+          (hdel-single key field-or-fields options)))))
+
+(defun hdel-single (key field options)
+  (cmd `("HDEL" ,key ,field) options))
+
+(defun hdel-multi (key fields options)
+  (cmd `("HDEL" ,key ,@fields) options))
+
+(defun hmget
+  ((key field options) (when (is_atom field))
+   (hmget-single key field options))
+  ((key field-or-fields options)
+   (cond ((io_lib:printable_unicode_list field-or-fields)
+          (hmget-single key field-or-fields options))
+         ((is_list field-or-fields)
+          (hmget-multi key field-or-fields options))
+         ('true
+          (hmget-single key field-or-fields options)))))
+
+(defun hmget-single (key field options)
+  (cmd `("HMGET" ,key ,field) options))
+
+(defun hmget-multi (key fields options)
+  (cmd `("HMGET" ,key ,@fields) options))
+
+(defun hmset (key pairs)
+  (hmset key pairs '()))
+
+(defun hmset (key pairs options)
+  (cmd `("HMSET" ,key ,@pairs) options))
+
+;;(defun hmset (key field-value-pairs options)
+;;  (cmd `("HMSET" ,key ,@field-value-pairs) options))
+
+
+
 ;;; General purpose functions for use by API functions
 
 (defun cmd (cmd options)
@@ -209,9 +256,12 @@
    `(,end)))
 
 (defun parse-result
+  (((= `#(,status (,data)) result) options) (when (is_atom data))
+   `#(,status ,data))
   (((= `#(,status ,data) result) options) (when (is_atom data))
    result)
   (((= `#(,status ,data) result) options) (when (is_list data))
+   (logjam:debug (MODULE) 'parse-result/2 "Result: ~p" `(,result))
    (case (proplists:get_value 'return-type options (ledis-cfg:get-return-type))
      ('binary result)
      ('string `#(,status ,(lists:map #'binary_to_list/1 data)))))
