@@ -10,7 +10,9 @@
   %% All modules used by the application.
   {modules,
    [
-    ledis
+    ledis,
+    'ledis-cfg',
+    'ledis-util'
    ]},
 
   %% All of the registered names the application uses. This can be ignored.
