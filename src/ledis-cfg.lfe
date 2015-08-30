@@ -1,7 +1,7 @@
 (defmodule ledis-cfg
   (export all))
 
-(include-lib "lutil/include/core.lfe")
+(include-lib "clj/include/seq.lfe")
 
 (defun get-ledis-config ()
   (let ((local (get-local-ledis-cfg)))
@@ -19,11 +19,11 @@
   (('())
     '())
   ((config)
-    (get-in config 'ledis)))
+    (get-in 'ledis config)))
 
 (defun get-client-process-name ()
-  (get-in (ledis-cfg:get-ledis-config) 'client-process-name))
+  (get-in 'client-process-name (ledis-cfg:get-ledis-config)))
 
 (defun get-return-type ()
-  (get-in (ledis-cfg:get-ledis-config) 'return-type))
+  (get-in 'return-type (ledis-cfg:get-ledis-config)))
 
