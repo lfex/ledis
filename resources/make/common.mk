@@ -112,13 +112,12 @@ check: check-unit-with-deps
 
 check-travis: $(LFETOOL) check
 
-push-all:
-	@echo "Pusing code to github ..."
-	git push --all
-	git push upstream --all
-	git push --tags
-	git push upstream --tags
+push-mirror:
+	git push gitlab --all
+	git push gitlab --tags
 
-install: compile
-	@echo "Installing $(PROJECT) ..."
-	@PATH=$(SCRIPT_PATH) lfetool install lfe
+push-main:
+	git push origin --all
+	git push origin --tags
+
+push: push-mirror push-main
