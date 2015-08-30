@@ -167,6 +167,29 @@ usage.
 #(ok "3")
 ```
 
+#### ``hmset`` [&#x219F;](#table-of-contents)
+
+Normally, the ``HMSET`` Redis command is of the form
+``HMSET key field value [field value ...]``, but for simplicity's sake with
+regard to LFE's arity, the ``hmset`` function is called a bit differently: It
+is of the form ``(hmset <key> '(<kv pair> ...))``. For instance:
+
+```lfe
+> (ledis:hmset 'foo2 '(field1 bar2))
+#(ok "OK")
+> (ledis:hmset 'foo2 '(field2 bizaz field3 boz field4 bleez))
+#(ok "OK")
+```
+
+These can then be accessed using ``hmget``:
+
+```lfe
+> (ledis:hmget 'foo2 'field4)
+#(ok ("bleez"))
+> (ledis:hmget 'foo2 '(field3 field2 field1))
+#(ok ("boz" "bizaz" "bar2"))
+```
+
 #### ``lrange`` [&#x219F;](#table-of-contents)
 
 In addition to ``lrange/3`` and ``lrange/4`` (which offers the same signature as
