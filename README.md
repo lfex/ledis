@@ -1,10 +1,14 @@
 # ledis
 
+[![][lutil-logo]][lutil-logo-large]
+
+[lutil-logo]: priv/images/ButterCrunchLettuce-2-small.png
+[lutil-logo-large]: priv/images/ButterCrunchLettuce-2-large.png
+
 *An LFE Redis Client Library*
 
-<img src="resources/logos/ButterCrunchLettuce-2-small.png" />
 
-## Table of Contents
+#### Table of Contents
 
 * [Dependences](#dependences-)
 * [Installtion and Setup](#installtion-and-setup-)
