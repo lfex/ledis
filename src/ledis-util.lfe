@@ -2,10 +2,10 @@
   (export all))
 
 (defun get-version ()
-  (lutil:get-app-version 'ledis))
+  (lr3-ver-util:get-app-version 'ledis))
 
 (defun get-versions ()
-  (++ (lutil:get-versions)
+  (++ (lr3-ver-util:get-versions)
       `(#(ledis ,(get-version)))))
 
 (defun make-func-no-options
