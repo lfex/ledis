@@ -48,8 +48,12 @@ $ make repl
 To use ledis from the shell, just do this:
 
 ```bash
-$ make repl-no-deps
+$ make repl
 ```
+
+Note that, under the hood, this will activate the "dev" profile, so LFE and
+some developer rebar3 LFE plugins will be downloaded the first time it is run.
+
 ```cl
 Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] ...
 
@@ -62,9 +66,9 @@ true
 > (ledis:get 'foo)
 #(ok undefined)
 > (ledis:set 'foo 'bar)
-#(ok #B(79 75))
+#(ok #"OK")
 > (ledis:get 'foo)
-#(ok #B(118 97 108 117 101))
+#(ok #"bar")
 ```
 
 You may also provide an option to convert all results to string values:
@@ -106,63 +110,65 @@ usage.
 
 ```lisp
 > (ledis:bitcount 'foo)
-#(ok "10")
+#(ok #"10")
 > (ledis:bitcount 'foo '(#(start 2) #(end 4)))
-#(ok "4")
+#(ok #"4")
 ```
 
 #### ``bitop`` [&#x219F;](#table-of-contents)
 
 ```lisp
 > (ledis:set 'key1 "foobar")
-#(ok "OK")
+#(ok #"OK")
 > (ledis:set 'key2 "absdef")
-#(ok "OK")
+#(ok #"OK")
 > (ledis:bitop 'AND 'dest '(key1 key2))
-#(ok "6")
+#(ok #"6")
 > (ledis:get 'dest)
-#(ok "`bc`ab")
+#(ok #"`bc`ab")
 ```
 
 #### ``bitpos`` [&#x219F;](#table-of-contents)
 
 ```lisp
 > (ledis:set 'mykey #b(#xff #xf0 #x00))
-#(ok "OK")
+#(ok #"OK")
 > (ledis:bitpos 'mykey 0)
-#(ok "12")
+#(ok #"12")
 > (ledis:set 'mykey #b(#x00 #xff #xf0))
-#(ok "OK")
+#(ok #"OK")
 > (ledis:bitpos 'mykey 1 '(#(start 1)))
-#(ok "8")
+#(ok #"8")
 > (ledis:bitpos 'mykey 1 '(#(start 2)))
-#(ok "16")
+#(ok #"16")
 > (ledis:set 'mykey #b(#x00 #x00 #x00))
-#(ok "OK")
+#(ok #"OK")
 > (ledis:bitpos 'mykey 1)
-#(ok "-1")
+#(ok #"-1")
 ```
 
 #### ``blpop`` [&#x219F;](#table-of-contents)
 
+The following would be returned if you had previously performed the ``(ledis:rpush 'list1 "banana"`` and ``(ledis:rpush 'list1 "tranbar")`` calls:
+
 ```lisp
 > (ledis:blpop 'list1 0)
-#(ok ("list1" "banana"))
+#(ok (#"list1" #"banana"))
 > (ledis:blpop '(list2 list3 list1) 0)
-#(ok ("list1" "tranbar"))
+#(ok (#"list1" #"tranbar"))
 ```
 
 #### ``del`` [&#x219F;](#table-of-contents)
 
 ```lisp
 > (ledis:set 'mykey "Hello")
-#(ok "OK")
+#(ok #"OK")
 > (ledis:del 'mykey)
-#(ok "1")
+#(ok #"1")
 > (ledis:multi-set '(key1 "val1" key2 "val2" key3 "val3"))
-#(ok "OK")
+#(ok #"OK")
 > (ledis:del '(key1 key2 key3 key4))
-#(ok "3")
+#(ok #"3")
 ```
 
 #### ``hmset`` [&#x219F;](#table-of-contents)
@@ -174,18 +180,18 @@ is of the form ``(hmset <key> '(<kv pair> ...))``. For instance:
 
 ```lfe
 > (ledis:hmset 'foo2 '(field1 bar2))
-#(ok "OK")
+#(ok #"OK")
 > (ledis:hmset 'foo2 '(field2 bizaz field3 boz field4 bleez))
-#(ok "OK")
+#(ok #"OK")
 ```
 
 These can then be accessed using ``hmget``:
 
 ```lfe
 > (ledis:hmget 'foo2 'field4)
-#(ok ("bleez"))
+#(ok (#"bleez"))
 > (ledis:hmget 'foo2 '(field3 field2 field1))
-#(ok ("boz" "bizaz" "bar2"))
+#(ok (#"boz" #"bizaz" #"bar2"))
 ```
 
 #### ``lrange`` [&#x219F;](#table-of-contents)
@@ -193,37 +199,41 @@ These can then be accessed using ``hmget``:
 In addition to ``lrange/3`` and ``lrange/4`` (which offers the same signature as
 associated Redis commands, with the 4-arity function also allowing options to be
 passed), ledis offers two additional arities for this function. Arity-1 and
-arity-2 will return the entire list at the given key:
+arity-2 will return the entire list at the given key (the following will be
+returned if you have previously done something like ``(ledis:lpush-multi 'fruits '("banana" "tranbar" "kiwi") '())``):
 
 ```lisp
 > (ledis:lrange 'fruits)
 #(ok
-  ("banana"
-   "tranbar"
-   "kiwi"))
+  (#"banana"
+   #"tranbar"
+   #"kiwi"))
 ```
+
 
 #### ``M*`` renamed to ``multi-*`` [&#x219F;](#table-of-contents)
 
 ```lisp
 > (ledis:multi-set '(a 10 b 20 c 30))
-#(ok "OK")
+#(ok #"OK")
 > (ledis:multi-get '(a b c))
-#(ok ("10" "20" "30"))
+#(ok (#"10" #"20" #"30"))
 ```
+
 
 #### ``set`` [&#x219F;](#table-of-contents)
 
 ```lisp
 > (ledis:set 'mykey "athirdvalue" '(#(xx) #(px 10000)))
-#(ok "OK")
+#(ok #"OK")
 > (ledis:get 'mykey)
-#(ok "athirdvalue")
+#(ok #"athirdvalue")
 > (timer:sleep 10000)
 ok
 > (ledis:get 'mykey)
 #(ok undefined)
 ```
+
 
 ## A Note for Developers [&#x219F;](#table-of-contents)
 
