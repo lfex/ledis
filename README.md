@@ -19,14 +19,7 @@ You will need the following installed on your system:
 
 * Erlang
 * Redis
-* rebar
-
-Additionally, the ledis ``Makefile`` sets up the following dependencies for you
-automatically when you run the ``compile`` target:
-
-* LFE
-* eredis
-* ltest
+* rebar3
 
 
 ## Installtion and Setup [&#x219F;](#table-of-contents)
