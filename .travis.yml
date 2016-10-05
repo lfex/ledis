@@ -2,7 +2,7 @@ language: erlang
 sudo: false
 addons:
   apt:
-    sources:
+    packages:
       - redis
 install: true
 before_script:
