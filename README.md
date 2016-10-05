@@ -55,9 +55,18 @@ Note that, under the hood, this will activate the "dev" profile, so LFE and
 some developer rebar3 LFE plugins will be downloaded the first time it is run.
 
 ```cl
-Erlang R15B03 (erts-5.9.3) [source] [smp:8:8] ...
+Erlang/OTP 19 [erts-8.1] [source] [64-bit] [smp:4:4] [async-threads:10] ...
 
-LFE Shell V5.9.3 (abort with ^G)
+   ..-~.~_~---..
+  (      \\     )    |   A Lisp-2+ on the Erlang VM
+  |`-.._/_\\_.-':    |   Type (help) for usage info.
+  |         g |_ \   |
+  |        n    | |  |   Docs: http://docs.lfe.io/
+  |       a    / /   |   Source: http://github.com/rvirding/lfe
+   \     l    |_/    |
+    \   r     /      |   LFE v1.2.0 (abort with ^G)
+     `-E___.-'
+
 >
 ```
 ```cl
