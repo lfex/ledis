@@ -4,5 +4,5 @@
 (include-lib "ltest/include/ltest-macros.lfe")
 
 (deftest test
-  'false)
+  (is-equal 1 1))
 
