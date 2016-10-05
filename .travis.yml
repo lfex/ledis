@@ -1,13 +1,19 @@
 language: erlang
+sudo: false
+addons:
+  apt:
+    sources:
+      - redis
 install: true
 before_script:
     - wget https://s3.amazonaws.com/rebar3/rebar3
     - chmod +x rebar3
+    - /etc/init.d/redis start
 env: PATH=".:$PATH"
-script: make compile
+script: rebar3 eunit -v
 otp_release:
+  - 19.1
   - 18.3
-  - 18.0
   - 17.5
   - R16B03-1
   - R15B03
