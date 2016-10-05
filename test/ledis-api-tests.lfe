@@ -60,7 +60,7 @@
 ;             #(ok #"-1")))
 
 ; XXX The following test is commented out until this ticket is fixed:
-;     https://github.com/lfex/ledis/issues/12
+;     https://github.com/lfex/ledis/issues/10
 ;
 ; (deftest blpop
 ;   (is-equal (progn
